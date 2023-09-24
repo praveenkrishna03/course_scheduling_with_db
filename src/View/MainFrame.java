@@ -82,7 +82,7 @@ public class MainFrame extends JFrame {
             //contentPanel.add(output_file_1,"OutputFile1");
             
             
-            cardLayout.show(contentPanel,"OutputFile1");
+            //cardLayout.show(contentPanel,"OutputFile1");
         });
         home.setValidateButtonListener(e -> {
             // Call the generateDataFromInputFiles method to generate data

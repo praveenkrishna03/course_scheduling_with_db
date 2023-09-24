@@ -12,6 +12,7 @@ package View;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -53,8 +54,15 @@ public class output_file_1 extends JPanel {
             JPanel buttonPanel = new JPanel();
             buttonPanel.add(backButton);
             setLayout(new BorderLayout());
-            add(buttonPanel, BorderLayout.CENTER);
-            add(scrollPane, BorderLayout.SOUTH);
+            add(buttonPanel, BorderLayout.EAST);
+            add(scrollPane, BorderLayout.NORTH);
+            backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Hide the panel when the "Back" button is pressed
+                setVisible(false);
+            }
+        });
             
         } else {
             System.out.println("it is empty");
@@ -64,10 +72,6 @@ public class output_file_1 extends JPanel {
         }
     }
 
-    public void setbackButtonListener(ActionListener listener) {
-        // Assuming you have a JButton named inputFile1Button
-        backButton.addActionListener(listener);
-    }
     
     
 }

@@ -239,7 +239,11 @@ public class UserController {
     List<String> inp_2_coursesList=new ArrayList();
     List<Integer> inp_2_capList=new ArrayList();
     List<List<String>> inp_2_prefList=new ArrayList();
+    String delete_time_table="DELETE FROM time_table WHERE course IS NOT NULL;";
     
+    PreparedStatement del_time_table = con.prepareStatement(delete_time_table);
+    
+    del_time_table.executeUpdate();
     
     String courses_sel="SELECT course_id FROM courses";
     String rooms_sel="SELECT room_no,capacity FROM rooms";
@@ -440,9 +444,9 @@ public class UserController {
                     for (int k : prefIndices) {
                         if (!isSlotOccupied[j][k]) {
                             timetable[j][k] = course;
-                            for(int l=0;l<inp_1_roomsList.size();l++){
-                                isSlotOccupied[l][k] = true;
-                            }
+                                for(int l=0;l<inp_1_roomsList.size();l++){
+                                    isSlotOccupied[l][k] = true;
+                                }
                             forpref=true;
                             break;
                         }
@@ -468,7 +472,7 @@ public class UserController {
                     for (int k : prefIndices) {
                         if (!isSlotOccupied[j][k]) {
                             timetable[j][k] = course;
-
+                            
                             for(int l=0;l<inp_1_roomsList.size();l++){
                                 isSlotOccupied[l][k] = true;
                             }
@@ -556,6 +560,20 @@ public class UserController {
             System.out.println(); // Move to the next line after each row
         }
         */
+        for(int i=0;i<inp_1_roomsList.size();i++){
+            for(int j=i;j<inp_1_timingList.size();j++){
+                if(timetable[i][j]!=null){
+                    String course=timetable[i][j];
+                    String room=inp_1_roomsList.get(i);
+                    String timing=inp_1_timingList.get(j);
+                    String insert="INSERT INTO time_table (course,room,time) VALUES ("+'"'+course+'"'+','+'"'+room+'"'+','+'"'+timing+'"'+");";
+                    PreparedStatement in = con.prepareStatement(insert);
+                    in.executeUpdate();
+                }
+            }
+            
+        }
+        
 
     
         return timetable;
