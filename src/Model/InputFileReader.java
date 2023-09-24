@@ -9,12 +9,21 @@ package Model;
  * @author gandh
  */
 
+import courseschedulingooad_2.CourseSchedulingOoad_2;
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.*;
+
 
 import javax.swing.JOptionPane;
 
@@ -72,12 +81,32 @@ public class InputFileReader {
     }
 
     private void readInputFile1(String fileName) {
+        
+        Connection con;
+        PreparedStatement pst;
+        
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             boolean readingRooms = false;
             boolean readingCourses = false;
             boolean readingTimes = false;
-
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con= DriverManager.getConnection("jdbc:mysql://localhost:3306/course_scheduling","root","praveenkrishna2003");
+            System.out.println("Connection establishment Success");
+            String delete_rooms="DELETE FROM rooms WHERE room_no>0;";
+            String delete_timings="DELETE FROM lecture_timings WHERE timings IS NOT NULL;";
+            String delete_courses="DELETE FROM courses WHERE course_id IS NOT NULL;";
+            String com="COMMIT";
+            PreparedStatement del_rooms = con.prepareStatement(delete_rooms);
+            PreparedStatement del_courses = con.prepareStatement(delete_courses);
+            PreparedStatement del_timings = con.prepareStatement(delete_timings);
+            PreparedStatement commit = con.prepareStatement(com);
+            del_rooms.executeUpdate();
+            del_courses.executeUpdate();
+            del_timings.executeUpdate();
+            commit.executeUpdate();
+            
             while ((line = br.readLine()) != null) {
                 if (line.equals("rooms")) {
                     readingRooms = true;
@@ -98,6 +127,15 @@ public class InputFileReader {
                         if (isValidRoomNumber(parts[0].trim()) && isValidCapacity(parts[1].trim())) {
                             inp_1_rooms.add(parts[0].trim());
                             inp_1_cap.add(Integer.parseInt(parts[1].trim()));
+                            String insert_room="INSERT INTO rooms (room_no,capacity) VALUES ("+parts[0].trim()+","+Integer.parseInt(parts[1].trim())+");";
+                            PreparedStatement in_rooms = con.prepareStatement(insert_room);
+                            //in_rooms.setString(1, parts[0].trim());
+                            //in_rooms.setInt(2, Integer.parseInt(parts[1].trim()));
+                            in_rooms.executeUpdate();
+                            System.out.println(insert_room);
+                            //in_rooms.executeUpdate();
+                            
+                            
                         } else {
                             showErrorMessage("Invalid room number or capacity: " + line);
                             return; // Exit the method on validation failure
@@ -108,6 +146,11 @@ public class InputFileReader {
                     for (String course : courses) {
                         if (isValidCourse(course.trim())) {
                             inp_1_courses.add(course.trim());
+                            String insert_course="INSERT INTO courses (course_id) VALUES ("+'"'+course.trim()+'"'+");";
+                            PreparedStatement in_course = con.prepareStatement(insert_course);
+                            System.out.println(insert_course);
+                            in_course.executeUpdate();
+                            
                         } else {
                             showErrorMessage("Invalid course: " + course);
                             return; // Exit the method on validation failure
@@ -119,6 +162,10 @@ public class InputFileReader {
                     for (String time : times) {
                         if (validTimings) {
                             inp_1_timing.add(time.trim());
+                            String insert_timing="INSERT INTO lecture_timings (timings) VALUES ("+'"'+time.trim()+'"'+");";
+                            PreparedStatement in_timing = con.prepareStatement(insert_timing);
+                            System.out.println(insert_timing);
+                            in_timing.executeUpdate();
                     } else {
                         showErrorMessage("Invalid timing(s): " + line);
                     }
@@ -128,9 +175,15 @@ public class InputFileReader {
                 }
                 
             }
+            //in_rooms.close();
+            con.close();
             //System.out.println("Completed_1");
         } catch (IOException e) {
             e.printStackTrace();
+        }catch(ClassNotFoundException ex){
+            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
+        }catch(SQLException ex){
+            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE,null,ex);
         }
     }
 
