@@ -35,6 +35,7 @@ public class InputFileReader {
     private List<String> inp_2_courses = new ArrayList<>();
     private List<Integer> inp_2_cap = new ArrayList<>();
     private List<List<String>> inp_2_pref = new ArrayList<>();
+    public Connection con;
 
     private boolean isValidRoomNumber(String roomNumber) {
         try {
@@ -82,8 +83,7 @@ public class InputFileReader {
 
     private void readInputFile1(String fileName) {
         
-        Connection con;
-        PreparedStatement pst;
+        
         
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -150,6 +150,7 @@ public class InputFileReader {
                             PreparedStatement in_course = con.prepareStatement(insert_course);
                             System.out.println(insert_course);
                             in_course.executeUpdate();
+                            System.out.println(in_course);
                             
                         } else {
                             showErrorMessage("Invalid course: " + course);
@@ -166,6 +167,7 @@ public class InputFileReader {
                             PreparedStatement in_timing = con.prepareStatement(insert_timing);
                             System.out.println(insert_timing);
                             in_timing.executeUpdate();
+                            System.out.println(insert_timing);
                     } else {
                         showErrorMessage("Invalid timing(s): " + line);
                     }
@@ -190,7 +192,17 @@ public class InputFileReader {
     private void readInputFile2(String fileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
-    
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con= DriverManager.getConnection("jdbc:mysql://localhost:3306/course_scheduling","root","praveenkrishna2003");
+            String delete_pref="DELETE FROM course_timepreference WHERE course_id IS NOT NULL;";
+            String delete_course="DELETE FROM course_details WHERE courseid IS NOT NULL;";
+            String com="COMMIT";
+            PreparedStatement del_courses = con.prepareStatement(delete_course);
+            PreparedStatement del_prefs = con.prepareStatement(delete_pref);
+            PreparedStatement commit = con.prepareStatement(com);
+            del_courses.executeUpdate();
+            del_prefs.executeUpdate();
+            commit.executeUpdate();
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("; "); // Split by ": " to match the specified format
                 
@@ -213,25 +225,37 @@ public class InputFileReader {
                     if (isValidCourse(course) && isValidCapacity(capacityStr)/*&& validateInputCourse(course) && isValidTiming(preference)*/) {
                         inp_2_courses.add(course);
                         inp_2_cap.add(Integer.parseInt(capacityStr));
-            
+                        String insert_course="INSERT INTO course_details (courseid,enrollment) VALUES ("+'"'+course+'"'+','+Integer.parseInt(capacityStr)+");";
+                        PreparedStatement in_course = con.prepareStatement(insert_course);
                         // Ensure that inp_2_pref contains all the strings from preference
+                        in_course.executeUpdate();
                         List<String> coursePreferences = new ArrayList<>();
                         for (String pref : preference) {
                             coursePreferences.add(pref.trim());
+                            String insert_pref="INSERT INTO course_timepreference (course_id,timings) VALUES ("+'"'+course+'"'+','+'"'+pref+'"'+");";
+                            PreparedStatement in_pref = con.prepareStatement(insert_pref);
+                        // Ensure that inp_2_pref contains all the strings from preference
+                            in_pref.executeUpdate();
                         }
+                        
 
                     // Add the list of preferences to inp_2_pref
                         inp_2_pref.add(coursePreferences);
+                        
                     } else {
                         showErrorMessage("Invalid input: " + line);
                     }
                 }
             }
             
-            
+            con.close();
             //System.out.println("Completed_2");
         } catch (IOException e) {
             e.printStackTrace();
+        }catch(ClassNotFoundException ex){
+            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
+        }catch(SQLException ex){
+            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE,null,ex);
         }
     }
     
