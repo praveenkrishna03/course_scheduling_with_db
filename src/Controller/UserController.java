@@ -17,6 +17,7 @@ import Model.RoomDB;
 import Model.TimingDB;
 import View.Home;
 import View.input_file_2;
+import courseschedulingooad_2.CourseSchedulingOoad_2;
 
 import javax.swing.*;
 
@@ -28,8 +29,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.*;
 
 public class UserController {
     // database file
@@ -38,6 +45,7 @@ public class UserController {
     private Database database;
     private Home home;
     private input_file_2 input_file_2;
+     public Connection con;
     
 
     
@@ -220,7 +228,103 @@ public class UserController {
         database.saveInput(databaseFile, input);
     }
     
-    public String[][] Schedule(List<String> inp_1_roomsList, List<Integer> inp_1_capList, List<String> inp_1_coursesList, List<String> inp_1_timingList, List<String> inp_2_coursesList, List<Integer> inp_2_capList, List<List<String>> inp_2_prefList) {
+    public String[][] Schedule() {
+    try{
+    Class.forName("com.mysql.cj.jdbc.Driver");
+    con= DriverManager.getConnection("jdbc:mysql://localhost:3306/course_scheduling","root","praveenkrishna2003");
+    List<String> inp_1_roomsList=new ArrayList();
+    List<Integer> inp_1_capList=new ArrayList();
+    List<String> inp_1_coursesList=new ArrayList();
+    List<String> inp_1_timingList=new ArrayList();
+    List<String> inp_2_coursesList=new ArrayList();
+    List<Integer> inp_2_capList=new ArrayList();
+    List<List<String>> inp_2_prefList=new ArrayList();
+    
+    
+    String courses_sel="SELECT course_id FROM courses";
+    String rooms_sel="SELECT room_no,capacity FROM rooms";
+    String lecture_timings_sel="SELECT timings FROM lecture_timings";
+    String course_details_sel="SELECT courseid, enrollment FROM course_details";
+    String course_timepreference_sel="SELECT course_id, timings FROM course_timepreference";
+    
+    
+    PreparedStatement courses_ps=con.prepareStatement(courses_sel);
+    PreparedStatement rooms_ps=con.prepareStatement(rooms_sel);
+    PreparedStatement lecture_timings_ps=con.prepareStatement(lecture_timings_sel);
+    PreparedStatement course_details_ps=con.prepareStatement(course_details_sel);
+    PreparedStatement course_timepreference_ps=con.prepareStatement(course_timepreference_sel);
+    
+    ResultSet courses_rs=courses_ps.executeQuery();
+    
+    while (courses_rs.next()) {
+                String courseId = courses_rs.getString("course_id");
+                inp_1_coursesList.add(courseId);
+    }
+    
+    ResultSet rooms_rs=rooms_ps.executeQuery();
+    
+    while (rooms_rs.next()) {
+                String room_no = rooms_rs.getString("room_no");
+                Integer room_cap = rooms_rs.getInt("capacity");
+                
+                inp_1_roomsList.add(room_no);
+                inp_1_capList.add(room_cap);
+    }
+    
+    ResultSet lecture_timings_rs=lecture_timings_ps.executeQuery();
+    
+    while (lecture_timings_rs.next()) {
+                String timing = lecture_timings_rs.getString("timings");
+                inp_1_timingList.add(timing);
+    }
+    
+    ResultSet course_details_rs=course_details_ps.executeQuery();
+    
+    while (course_details_rs.next()) {
+                String course_id = course_details_rs.getString("courseid");
+                Integer course_cap = course_details_rs.getInt("enrollment");
+                
+                inp_2_coursesList.add(course_id);
+                inp_2_capList.add(course_cap);
+    }
+    
+    ResultSet course_timepreference_rs=course_timepreference_ps.executeQuery();
+    
+    while(course_timepreference_rs.next()){
+        String course_id = course_timepreference_rs.getString("course_id");
+        String preference = course_timepreference_rs.getString("timings");
+        
+        int existingIndex = -1;
+        
+        for (int i = 0; i < inp_2_coursesList.size(); i++) {
+        if (inp_2_coursesList.get(i).equals(course_id)) {
+            existingIndex = i;
+            break;
+        }
+    }
+        if (existingIndex == -1) {
+        inp_2_coursesList.add(course_id);
+
+        List<String> preferences = new ArrayList<>();
+        if (preference != null) {
+            preferences.add(preference);
+        }
+        inp_2_prefList.add(preferences);
+    } else {
+        // Ensure inp_2_prefList has enough elements
+        while (inp_2_prefList.size() <= existingIndex) {
+            inp_2_prefList.add(new ArrayList<>());
+        }
+
+        List<String> preferences = inp_2_prefList.get(existingIndex);
+        if (preference != null) {
+            preferences.add(preference);
+        }
+    }
+        
+    }
+
+    
     // Create lists for PG courses with and without preferences
     List<String> PG_with_no_pref_courseList = new ArrayList<>();
     List<Integer> PG_with_no_pref_capList = new ArrayList<>();
@@ -453,8 +557,15 @@ public class UserController {
         }
         */
 
-
+    
         return timetable;
+    }catch(ClassNotFoundException ex){
+            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
+        }catch(SQLException ex){
+            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE,null,ex);
+        }
+        
+    return null;
     }
 
 

@@ -97,15 +97,10 @@ public class MainFrame extends JFrame {
 
             InputFileReader inputFileReader=new InputFileReader();
             List<String> inp_1_roomsList=inputFileReader.getInp_1_rooms();
-            List<Integer> inp_1_capList=inputFileReader.getInp_1_cap();
-            List<String> inp_1_coursesList=inputFileReader.getInp_1_courses();
             List<String> inp_1_timingList=inputFileReader.getInp_1_timing();
-            List<String> inp_2_coursesList=inputFileReader.getInp_2_courses();
-            List<Integer> inp_2_capList=inputFileReader.getInp_2_cap();
-            List<List<String>> inp_2_prefList=inputFileReader.getInp_2_pref();
-
+            
             UserController control=new UserController(home, input_file_2);
-            String[][] datas= control.Schedule(inp_1_roomsList, inp_1_capList, inp_1_coursesList, inp_1_timingList, inp_2_coursesList, inp_2_capList, inp_2_prefList);
+            String[][] datas= control.Schedule();
             //System.out.println(datas);
             //System.out.println(data[0].length);
             output_file_1 output_file_1=new output_file_1(datas,inp_1_roomsList,inp_1_timingList);
