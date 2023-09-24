@@ -67,8 +67,8 @@ public class InputFileReader {
     public InputFileReader() {
         
 
-        readInputFile1("src\\main\\java\\com\\mycompany\\courseschedulingooad\\data\\input_file_1.txt");
-        readInputFile2("src\\main\\java\\com\\mycompany\\courseschedulingooad\\data\\input_file_2.txt");
+        readInputFile1("src\\data\\input_file_1.txt");
+        readInputFile2("src\\data\\input_file_2.txt");
     }
 
     private void readInputFile1(String fileName) {
