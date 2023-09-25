@@ -40,8 +40,8 @@ import java.sql.*;
 
 public class UserController {
     // database file
-    private String FilePath_ip_1 = "data\\input_file_1.txt";
-    private String FilePath_ip_2 = "data\\input_file_2.txt";
+    private String FilePath_ip_1 = "data\\F1.8.txt";
+    private String FilePath_ip_2 = "data\\F2.4.txt";
     private Database database;
     private Home home;
     private input_file_2 input_file_2;
