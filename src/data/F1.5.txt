@@ -1,0 +1,7 @@
+rooms
+202: 34
+100: 10
+courses
+cs330,
+timing
+TT1,MWF12,

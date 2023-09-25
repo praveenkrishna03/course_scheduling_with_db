@@ -1,0 +1,9 @@
+rooms
+201: 50
+202: 75
+203: 30
+204: 150
+courses
+cs310,cs320,cs330,cs340,cs350,cs315,cs335,cs365,cs325,cs345,cs355,cs305,cs360,cs370,cs380,cs375,cs610,cs620,cs605,cs615,cs630,cs625,cs635,cs640,cs650,cs645,cs660,cs655,cs665,cs670,
+timing
+MWF9,MWF11,MWF2,TT8:30,TT1,TT11:30,
