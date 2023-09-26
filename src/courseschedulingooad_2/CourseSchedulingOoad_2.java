@@ -24,7 +24,7 @@ public class CourseSchedulingOoad_2 {
         //PreparedStatement pst;    // runs in AWT thread
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con= DriverManager.getConnection("jdbc:mysql://localhost:3306/course_scheduling","root","praveenkrishna2003");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/course_scheduling","root","praveenkrishna2003");
             System.out.println("Success");
             SwingUtilities.invokeLater(MainFrame::new);
         }catch(ClassNotFoundException | SQLException ex){
