@@ -11,8 +11,6 @@ package View;
 
 import Controller.UserController;
 import Model.CourseDB;
-import Model.InputDB;
-import Model.InputFileReader;
 import Model.RoomDB;
 import Model.TimingDB;
 import Model.InputFileReader;
@@ -57,7 +55,6 @@ public class MainFrame extends JFrame {
         contentPanel.add(home, "home");
         contentPanel.add(input_file_1, "InputFile1");
         contentPanel.add(input_file_2, "InputFile2");
-        ;
         userController = new UserController(home,input_file_2); 
         
 

@@ -10,7 +10,6 @@ package Model;
  */
 
 import courseschedulingooad_2.CourseSchedulingOoad_2;
-import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,12 +28,12 @@ import javax.swing.JOptionPane;
 
 public class InputFileReader {
     public List<String> inp_1_rooms = new ArrayList<>();
-    private List<Integer> inp_1_cap = new ArrayList<>();
-    private List<String> inp_1_courses = new ArrayList<>();
+    public List<Integer> inp_1_cap = new ArrayList<>();
+    public List<String> inp_1_courses = new ArrayList<>();
     public List<String> inp_1_timing = new ArrayList<>();
-    private List<String> inp_2_courses = new ArrayList<>();
-    private List<Integer> inp_2_cap = new ArrayList<>();
-    private List<List<String>> inp_2_pref = new ArrayList<>();
+    public List<String> inp_2_courses = new ArrayList<>();
+    public List<Integer> inp_2_cap = new ArrayList<>();
+    public List<List<String>> inp_2_pref = new ArrayList<>();
     public Connection con;
 
     private boolean isValidRoomNumber(String roomNumber) {
@@ -45,17 +44,17 @@ public class InputFileReader {
             return false;
         }
     }
-    private boolean validateInputCourse(String course) {
+    public boolean validateInputCourse(String course) {
         return inp_1_rooms.contains(course);
     }
     
     
 
-    private boolean isValidTiming(String timing) {
+    public boolean isValidTiming(String timing) {
         return timing.matches("^(MWF\\d{2}(:\\d{2})?|TT\\d{2}(:\\d{2})?)$|^\\d{1,2}$");
     }
 
-    private boolean isValidCapacity(String capacity) {
+    public boolean isValidCapacity(String capacity) {
         // Check if capacity is a number and within the range 10 to 90
         try {
             int cap = Integer.parseInt(capacity);
@@ -108,17 +107,23 @@ public class InputFileReader {
             commit.executeUpdate();
             
             while ((line = br.readLine()) != null) {
-                if (line.equals("rooms")) {
-                    readingRooms = true;
-                    continue;
-                } else if (line.equals("courses")) {
-                    readingRooms = false;
-                    readingCourses = true;
-                    continue;
-                } else if (line.equals("timing")) {
-                    readingCourses = false;
-                    readingTimes = true;
-                    continue;
+                switch (line) {
+                    case "rooms" -> {
+                        readingRooms = true;
+                        continue;
+                    }
+                    case "courses" -> {
+                        readingRooms = false;
+                        readingCourses = true;
+                        continue;
+                    }
+                    case "timing" -> {
+                        readingCourses = false;
+                        readingTimes = true;
+                        continue;
+                    }
+                    default -> {
+                    }
                 }
 
                 if (readingRooms) {
@@ -126,8 +131,8 @@ public class InputFileReader {
                     if (parts.length == 2) {
                         if (isValidRoomNumber(parts[0].trim()) && isValidCapacity(parts[1].trim())) {
                             inp_1_rooms.add(parts[0].trim());
-                            inp_1_cap.add(Integer.parseInt(parts[1].trim()));
-                            String insert_room="INSERT INTO rooms (room_no,capacity) VALUES ("+parts[0].trim()+","+Integer.parseInt(parts[1].trim())+");";
+                            inp_1_cap.add(Integer.valueOf(parts[1].trim()));
+                            String insert_room="INSERT INTO rooms (room_no,capacity) VALUES ("+parts[0].trim()+","+Integer.valueOf(parts[1].trim())+");";
                             PreparedStatement in_rooms = con.prepareStatement(insert_room);
                             //in_rooms.setString(1, parts[0].trim());
                             //in_rooms.setInt(2, Integer.parseInt(parts[1].trim()));
@@ -181,11 +186,8 @@ public class InputFileReader {
             con.close();
             //System.out.println("Completed_1");
         } catch (IOException e) {
-            e.printStackTrace();
-        }catch(ClassNotFoundException ex){
+        }catch(ClassNotFoundException | SQLException ex){
             Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
-        }catch(SQLException ex){
-            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE,null,ex);
         }
     }
 
@@ -224,8 +226,8 @@ public class InputFileReader {
             
                     if (isValidCourse(course) && isValidCapacity(capacityStr)/*&& validateInputCourse(course) && isValidTiming(preference)*/) {
                         inp_2_courses.add(course);
-                        inp_2_cap.add(Integer.parseInt(capacityStr));
-                        String insert_course="INSERT INTO course_details (courseid,enrollment) VALUES ("+'"'+course+'"'+','+Integer.parseInt(capacityStr)+");";
+                        inp_2_cap.add(Integer.valueOf(capacityStr));
+                        String insert_course="INSERT INTO course_details (courseid,enrollment) VALUES ("+'"'+course+'"'+','+Integer.valueOf(capacityStr)+");";
                         PreparedStatement in_course = con.prepareStatement(insert_course);
                         // Ensure that inp_2_pref contains all the strings from preference
                         in_course.executeUpdate();
@@ -252,10 +254,8 @@ public class InputFileReader {
             //System.out.println("Completed_2");
         } catch (IOException e) {
             e.printStackTrace();
-        }catch(ClassNotFoundException ex){
+        }catch(ClassNotFoundException | SQLException ex){
             Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
-        }catch(SQLException ex){
-            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE,null,ex);
         }
     }
     

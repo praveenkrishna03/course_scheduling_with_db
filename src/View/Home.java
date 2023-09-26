@@ -16,13 +16,13 @@ import java.awt.event.ActionListener;
 
 public class Home extends JPanel {
 
-    private JButton input_file_1_Button;
-    private JButton input_file_2_Button;
-    private JButton validate_Button;
-    private JButton generate_Button;
-    private JButton output_1_Button;
-    private JButton output_2_Button;
-    private JButton output_3_Button;
+    public JButton input_file_1_Button;
+    public JButton input_file_2_Button;
+    public JButton validate_Button;
+    public JButton generate_Button;
+    public JButton output_1_Button;
+    public JButton output_2_Button;
+    public JButton output_3_Button;
 
     public Home() {
         

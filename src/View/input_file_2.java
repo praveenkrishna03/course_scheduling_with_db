@@ -16,12 +16,12 @@ import java.awt.event.ActionListener;
 
 public class input_file_2 extends JPanel {
 
-    private JTextField courseField;
-    private JTextField capacityField;
-    private JTextField preferencesField;
+    public JTextField courseField;
+    public JTextField capacityField;
+    public JTextField preferencesField;
 
-    private JButton addButton;
-    private JButton goback;
+    public JButton addButton;
+    public JButton goback;
 
     public input_file_2() {
 

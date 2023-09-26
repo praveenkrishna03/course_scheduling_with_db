@@ -12,8 +12,6 @@ package View;
 import javax.swing.*;
 
 import Controller.UserController;
-import Model.RoomDB;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,27 +20,27 @@ import java.util.List;
 
 public class input_file_1 extends JPanel {
 
-    private JButton addButton;
-    private JButton submitButton;
-    private JButton addButton2;
-    private JButton submitButton2;
-    private JButton addButton3;
-    private JButton submitButton3;
+    public JButton addButton;
+    public JButton submitButton;
+    public JButton addButton2;
+    public JButton submitButton2;
+    public JButton addButton3;
+    public JButton submitButton3;
 
-    private JPanel panel;
-    private int rooms;
-    private int courses;
-    private int timings;
-    private List<JTextField> roomFields;
-    private List<JTextField> capacityFields;
-    private List<JTextField> courseFields;
-    private List<JTextField> timingFields;
-    private UserController userController;
-    private JPanel contentPanel;
-    private CardLayout cardLayout;
-    private JPanel page1 = new JPanel();
-    private JPanel page2=new JPanel();
-    private JPanel page3=new JPanel();
+    public JPanel panel;
+    public int rooms;
+    public int courses;
+    public int timings;
+    public List<JTextField> roomFields;
+    public List<JTextField> capacityFields;
+    public List<JTextField> courseFields;
+    public List<JTextField> timingFields;
+    public UserController userController;
+    public JPanel contentPanel;
+    public CardLayout cardLayout;
+    public JPanel page1 = new JPanel();
+    public JPanel page2=new JPanel();
+    public JPanel page3=new JPanel();
     public List<JTextField> getRoomFields() {
         return roomFields;
     }
@@ -76,7 +74,7 @@ public class input_file_1 extends JPanel {
         capacityFields = new ArrayList<>();
         courseFields = new ArrayList<>();
         timingFields=new ArrayList<>();
-        int buttonSpacing = 20;
+        //int buttonSpacing = 20;
         rooms = 1;
         courses=1;
         timings=1;
@@ -89,21 +87,15 @@ public class input_file_1 extends JPanel {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.NONE;
 
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                    addElement(rooms);
-                    rooms++;
-            }
+        addButton.addActionListener((ActionEvent e) -> {
+            addElement(rooms);
+            rooms++;
         });
 
 
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Iterate through roomFields and capacityFields to retrieve the text
-                cardLayout.show(contentPanel, "page2");
-            }
+        submitButton.addActionListener((ActionEvent e) -> {
+            // Iterate through roomFields and capacityFields to retrieve the text
+            cardLayout.show(contentPanel, "page2");
         });
 
 
@@ -131,20 +123,14 @@ public class input_file_1 extends JPanel {
 
         
 
-        addButton2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                    addElement2(courses);
-                    courses++;
-            }
+        addButton2.addActionListener((ActionEvent e) -> {
+            addElement2(courses);
+            courses++;
         });
 
-        submitButton2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Iterate through roomFields and capacityFields to retrieve the text
-                cardLayout.show(contentPanel, "page3");
-            }
+        submitButton2.addActionListener((ActionEvent e) -> {
+            // Iterate through roomFields and capacityFields to retrieve the text
+            cardLayout.show(contentPanel, "page3");
         });
 
 
@@ -169,20 +155,14 @@ public class input_file_1 extends JPanel {
 
         
 
-        addButton3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                    addElement3(timings);
-                    timings++;
-            }
+        addButton3.addActionListener((ActionEvent e) -> {
+            addElement3(timings);
+            timings++;
         });
 
-        submitButton3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Iterate through roomFields and capacityFields to retrieve the text
-                //cardLayout.show(contentPanel, "page2");
-            }
+        submitButton3.addActionListener((ActionEvent e) -> {
+            // Iterate through roomFields and capacityFields to retrieve the text
+            //cardLayout.show(contentPanel, "page2");
         });
 
 

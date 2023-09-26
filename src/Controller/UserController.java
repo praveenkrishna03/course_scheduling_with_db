@@ -21,14 +21,7 @@ import courseschedulingooad_2.CourseSchedulingOoad_2;
 
 import javax.swing.*;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -40,12 +33,12 @@ import java.sql.*;
 
 public class UserController {
     // database file
-    private String FilePath_ip_1 = "data\\F1.8.txt";
-    private String FilePath_ip_2 = "data\\F2.4.txt";
-    private Database database;
-    private Home home;
-    private input_file_2 input_file_2;
-     public Connection con;
+    public String FilePath_ip_1 = "data\\F1.8.txt";
+    public String FilePath_ip_2 = "data\\F2.4.txt";
+    public Database database;
+    public Home home;
+    public input_file_2 input_file_2;
+    public Connection con;
     
 
     
@@ -577,10 +570,8 @@ public class UserController {
 
     
         return timetable;
-    }catch(ClassNotFoundException ex){
+    }catch(ClassNotFoundException | SQLException ex){
             Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
-        }catch(SQLException ex){
-            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE,null,ex);
         }
         
     return null;

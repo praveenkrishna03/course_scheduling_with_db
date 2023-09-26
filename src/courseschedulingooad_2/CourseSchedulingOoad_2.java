@@ -20,17 +20,15 @@ public class CourseSchedulingOoad_2 {
     
 
     public static void main(String[] args) {
-        Connection con;
-        PreparedStatement pst;    // runs in AWT thread
+        
+        //PreparedStatement pst;    // runs in AWT thread
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con= DriverManager.getConnection("jdbc:mysql://localhost:3306/course_scheduling","root","praveenkrishna2003");
+            Connection con= DriverManager.getConnection("jdbc:mysql://localhost:3306/course_scheduling","root","praveenkrishna2003");
             System.out.println("Success");
             SwingUtilities.invokeLater(MainFrame::new);
-        }catch(ClassNotFoundException ex){
+        }catch(ClassNotFoundException | SQLException ex){
             Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
-        }catch(SQLException ex){
-            Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE,null,ex);
         }
     }
 }

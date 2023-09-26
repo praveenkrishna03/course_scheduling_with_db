@@ -56,13 +56,10 @@ public class output_file_1 extends JPanel {
             setLayout(new BorderLayout());
             add(buttonPanel, BorderLayout.EAST);
             add(scrollPane, BorderLayout.NORTH);
-            backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            backButton.addActionListener((ActionEvent e) -> {
                 // Hide the panel when the "Back" button is pressed
                 setVisible(false);
-            }
-        });
+            });
             
         } else {
             System.out.println("it is empty");

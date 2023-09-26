@@ -11,22 +11,21 @@ package Model;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import View.input_file_2;
+//import View.input_file_2;
 
 public class Database {
 
     
-    private ArrayList<RoomDB> roomsArrayList;
-    private ArrayList<CourseDB> courseArrayList;
-    private ArrayList<TimingDB> timingArrayList;
-    private ArrayList<InputDB> InputCourseArrayList;
-    private ArrayList<InputDB> InputCapacityArrayList;
-    private ArrayList<InputDB> InputPreferencesArrayList;
-    private ArrayList<InputDB> InputArrayList;
+    public ArrayList<RoomDB> roomsArrayList;
+    public ArrayList<CourseDB> courseArrayList;
+    public ArrayList<TimingDB> timingArrayList;
+    public ArrayList<InputDB> InputCourseArrayList;
+    public ArrayList<InputDB> InputCapacityArrayList;
+    public ArrayList<InputDB> InputPreferencesArrayList;
+    public ArrayList<InputDB> InputArrayList;
     private int inputentry=0;
 
 
@@ -38,7 +37,7 @@ public class Database {
         InputCapacityArrayList = new ArrayList<>();
         InputPreferencesArrayList = new ArrayList<>();
         InputArrayList=new ArrayList<>();
-        input_file_2 input_file_2 = new input_file_2();
+        //input_file_2 input_file_2 = new input_file_2();
  
     }
 
