@@ -33,7 +33,7 @@ import java.sql.*;
 
 public class UserController {
     // database file
-    public String FilePath_ip_1 = "data\\F1.8.txt";
+    public String FilePath_ip_1 = "data\\F1.1.txt";
     public String FilePath_ip_2 = "data\\F2.4.txt";
     public Database database;
     public Home home;

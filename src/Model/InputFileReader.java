@@ -54,14 +54,14 @@ public class InputFileReader {
     }
 
     public boolean isValidCapacity(String capacity) {
-        // Check if capacity is a number and within the range 10 to 90
-        try {
-            int cap = Integer.parseInt(capacity);
-            return cap >= 10 ;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    try {
+        int cap = Integer.parseInt(capacity);
+        return cap >= 10 && cap <= 300; // Check if cap is within the range 10 to 300
+    } catch (NumberFormatException e) {
+        return false;
     }
+}
+
 
     private boolean isValidCourse(String course) {
         return course.length() == 5 && course.charAt(0) == 'c' && course.charAt(1) == 's' && course.substring(2).matches("\\d{3}");
@@ -75,7 +75,7 @@ public class InputFileReader {
     public InputFileReader() {
         
 
-        readInputFile1("src\\data\\F1.8.txt");
+        readInputFile1("src\\data\\F1.1.txt");
         readInputFile2("src\\data\\F2.4.txt");
     }
 
@@ -85,6 +85,7 @@ public class InputFileReader {
         
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
+            boolean fileIsEmpty = true;
             boolean readingRooms = false;
             boolean readingCourses = false;
             boolean readingTimes = false;
@@ -141,8 +142,18 @@ public class InputFileReader {
                             
                             
                         } else {
-                            showErrorMessage("Invalid room number or capacity: " + line);
-                            return; // Exit the method on validation failure
+                            /*if(isValidRoomNumber(parts[0].trim())==false&&isValidCapacity(parts[1].trim())==false){
+                                showErrorMessage("Invalid room number: " + parts[0].trim());
+                                showErrorMessage("Invalid Capacity: " + parts[1].trim());
+                            }
+                            else*/ if(isValidRoomNumber(parts[0].trim())==false) {
+                                showErrorMessage("Invalid room number: " + parts[0].trim());
+                             // Exit the method on validation failure
+                            }else if(isValidCapacity(parts[1].trim())==false) {
+                                showErrorMessage("Invalid capacity: " + parts[1].trim());
+                             // Exit the method on validation failure
+                            }
+                            
                         }
                     }
                 } else if (readingCourses) {
@@ -158,7 +169,7 @@ public class InputFileReader {
                             
                         } else {
                             showErrorMessage("Invalid course: " + course);
-                            return; // Exit the method on validation failure
+                             // Exit the method on validation failure
                             }
                         }
                 } else if (readingTimes) {
@@ -179,12 +190,19 @@ public class InputFileReader {
 
                     
                 }
+                fileIsEmpty=false;
                 
             }
             //in_rooms.close();
             con.close();
+            if (fileIsEmpty) {
+            // Handle the case where the file is empty
+            showErrorMessage("Input file 1 is empty.");
+            }
             //System.out.println("Completed_1");
         } catch (IOException e) {
+            showErrorMessage("Input file 1 not found");
+            e.printStackTrace();
         }catch(ClassNotFoundException | SQLException ex){
             Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -193,6 +211,7 @@ public class InputFileReader {
     private void readInputFile2(String fileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
+            boolean fileIsEmpty = true;
             Class.forName("com.mysql.cj.jdbc.Driver");
             con= DriverManager.getConnection("jdbc:mysql://localhost:3306/course_scheduling","root","praveenkrishna2003");
             String delete_pref="DELETE FROM course_timepreference WHERE course_id IS NOT NULL;";
@@ -247,11 +266,17 @@ public class InputFileReader {
                         showErrorMessage("Invalid input: " + line);
                     }
                 }
+                fileIsEmpty=false;
             }
             
             con.close();
+            if (fileIsEmpty) {
+            // Handle the case where the file is empty
+            showErrorMessage("Input file 2 is empty.");
+            }
             //System.out.println("Completed_2");
         } catch (IOException e) {
+            showErrorMessage("Input file 2 not found");
             e.printStackTrace();
         }catch(ClassNotFoundException | SQLException ex){
             Logger.getLogger(CourseSchedulingOoad_2.class.getName()).log(Level.SEVERE, null, ex);
