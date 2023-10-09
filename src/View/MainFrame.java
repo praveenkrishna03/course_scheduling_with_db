@@ -84,8 +84,10 @@ public class MainFrame extends JFrame {
         home.setValidateButtonListener(e -> {
             // Call the generateDataFromInputFiles method to generate data
             Object[] data = userController.generateDataFromInputFiles();
+            
             // Display the generated data in a table or perform further actions
             // For now, let's just print it
+            //JOptionPane.showMessageDialog(null, "Validation Done", "Done", JOptionPane.INFORMATION_MESSAGE);
             JOptionPane.showMessageDialog(null, "Validation Done", "Done", JOptionPane.INFORMATION_MESSAGE);
         });
 

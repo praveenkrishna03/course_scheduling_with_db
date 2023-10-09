@@ -13,6 +13,7 @@ import courseschedulingooad_2.CourseSchedulingOoad_2;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import static java.lang.Integer.parseInt;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class InputFileReader {
+    public boolean haserror=false;
     public List<String> inp_1_rooms = new ArrayList<>();
     public List<Integer> inp_1_cap = new ArrayList<>();
     public List<String> inp_1_courses = new ArrayList<>();
@@ -50,7 +52,11 @@ public class InputFileReader {
     
 
     public boolean isValidTiming(String timing) {
-        return timing.matches("^(MWF\\d{2}(:\\d{2})?|TT\\d{2}(:\\d{2})?)$|^\\d{1,2}$");
+        return timing.matches("^(MWF\\d{1,2}(:\\d{2})?|TT\\d{1,2}(:\\d{2})?|TT\\d:\\d)$|^\\d{1,2}$");
+
+
+        
+        
     }
 
     public boolean isValidCapacity(String capacity) {
@@ -75,7 +81,7 @@ public class InputFileReader {
     public InputFileReader() {
         
 
-        readInputFile1("src\\data\\F1.1.txt");
+        readInputFile1("src\\data\\F1.8.txt");
         readInputFile2("src\\data\\F2.4.txt");
     }
 
@@ -105,7 +111,7 @@ public class InputFileReader {
             del_courses.executeUpdate();
             del_timings.executeUpdate();
             commit.executeUpdate();
-            
+            int rooms_count=0;
             while ((line = br.readLine()) != null) {
                 switch (line) {
                     case "rooms" -> {
@@ -125,71 +131,132 @@ public class InputFileReader {
                     default -> {
                     }
                 }
-
+                
                 if (readingRooms) {
-                    String[] parts = line.split(":");
-                    if (parts.length == 2) {
-                        if (isValidRoomNumber(parts[0].trim()) && isValidCapacity(parts[1].trim())) {
-                            inp_1_rooms.add(parts[0].trim());
-                            inp_1_cap.add(Integer.valueOf(parts[1].trim()));
-                            String insert_room="INSERT INTO rooms (room_no,capacity) VALUES ("+parts[0].trim()+","+Integer.valueOf(parts[1].trim())+");";
-                            PreparedStatement in_rooms = con.prepareStatement(insert_room);
-                            //in_rooms.setString(1, parts[0].trim());
-                            //in_rooms.setInt(2, Integer.parseInt(parts[1].trim()));
-                            in_rooms.executeUpdate();
-                            System.out.println(insert_room);
-                            //in_rooms.executeUpdate();
-                            
-                            
-                        } else {
-                            /*if(isValidRoomNumber(parts[0].trim())==false&&isValidCapacity(parts[1].trim())==false){
-                                showErrorMessage("Invalid room number: " + parts[0].trim());
-                                showErrorMessage("Invalid Capacity: " + parts[1].trim());
-                            }
-                            else*/ if(isValidRoomNumber(parts[0].trim())==false) {
-                                showErrorMessage("Invalid room number: " + parts[0].trim());
-                             // Exit the method on validation failure
-                            }else if(isValidCapacity(parts[1].trim())==false) {
-                                showErrorMessage("Invalid capacity: " + parts[1].trim());
-                             // Exit the method on validation failure
-                            }
-                            
-                        }
+    if (rooms_count < 20) {
+        String[] parts = line.split(":");
+        if (parts != null) {
+            if (parts.length == 2) {
+                String roomNumber = parts[0].trim();
+                int capacity = Integer.valueOf(parts[1].trim());
+                
+                // Check for duplicates
+                boolean isDuplicate = false;
+                for (int i = 0; i < inp_1_rooms.size(); i++) {
+                    if (inp_1_rooms.get(i).equals(roomNumber) || inp_1_cap.get(i) == capacity) {
+                        isDuplicate = true;
+                        break;
                     }
-                } else if (readingCourses) {
-                    String[] courses = line.split(",");
-                    for (String course : courses) {
-                        if (isValidCourse(course.trim())) {
-                            inp_1_courses.add(course.trim());
-                            String insert_course="INSERT INTO courses (course_id) VALUES ("+'"'+course.trim()+'"'+");";
-                            PreparedStatement in_course = con.prepareStatement(insert_course);
-                            System.out.println(insert_course);
-                            in_course.executeUpdate();
-                            System.out.println(in_course);
-                            
-                        } else {
-                            showErrorMessage("Invalid course: " + course);
-                             // Exit the method on validation failure
-                            }
-                        }
-                } else if (readingTimes) {
-                    String[] times = line.split(",");
-                    boolean validTimings = true;
-                    for (String time : times) {
-                        if (validTimings) {
-                            inp_1_timing.add(time.trim());
-                            String insert_timing="INSERT INTO lecture_timings (timings) VALUES ("+'"'+time.trim()+'"'+");";
-                            PreparedStatement in_timing = con.prepareStatement(insert_timing);
-                            System.out.println(insert_timing);
-                            in_timing.executeUpdate();
-                            System.out.println(insert_timing);
-                    } else {
-                        showErrorMessage("Invalid timing(s): " + line);
-                    }
-                    }
-
-                    
                 }
+
+                if (!isDuplicate && isValidRoomNumber(roomNumber) && isValidCapacity(String.valueOf(capacity))) {
+                    rooms_count++;
+                    inp_1_rooms.add(roomNumber);
+                    inp_1_cap.add(capacity);
+                    String insert_room = "INSERT INTO rooms (room_no,capacity) VALUES (" + roomNumber + "," + capacity + ");";
+                    PreparedStatement in_rooms = con.prepareStatement(insert_room);
+                    in_rooms.executeUpdate();
+                    System.out.println(insert_room);
+                } else {
+                    if (isDuplicate) {
+                        showErrorMessage("Duplicate room: " + roomNumber + " with capacity: " + capacity);
+                    } else if (!isValidRoomNumber(roomNumber)) {
+                        showErrorMessage("Invalid room number: " + roomNumber);
+                    } else if (!isValidCapacity(String.valueOf(capacity))) {
+                        showErrorMessage("Invalid capacity: " + capacity);
+                    }
+                    // Exit the method on validation failure
+                }
+            }
+        } else {
+            showErrorMessage("Rooms list Empty");
+        }
+    } else {
+        showErrorMessage("Too many rooms. Maximum allowed is 20.");
+    }
+}
+else if (readingCourses) {
+    if (rooms_count == 0) {
+        showErrorMessage("Rooms list Empty");
+    }
+    
+    String[] courses = line.split(",");
+    if (courses.length != 0) {
+        if (courses.length <= 30) {
+            for (String course : courses) {
+                String trimmedCourse = course.trim();
+                boolean isDuplicate = false;
+                for (String addedCourse : inp_1_courses) {
+                    if (trimmedCourse.equals(addedCourse)) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (!isDuplicate && isValidCourse(trimmedCourse)) {
+                    inp_1_courses.add(trimmedCourse);
+                    String insert_course = "INSERT INTO courses (course_id) VALUES (" + '"' + trimmedCourse + '"' + ");";
+                    PreparedStatement in_course = con.prepareStatement(insert_course);
+                    System.out.println(insert_course);
+                    in_course.executeUpdate();
+                    System.out.println(in_course);
+                } else {
+                    if (isDuplicate) {
+                        showErrorMessage("Duplicate course: " + trimmedCourse);
+                    } else {
+                        showErrorMessage("Invalid course: " + trimmedCourse);
+                    }
+                    // Exit the method on validation failure
+                }
+            }
+        } else {
+            showErrorMessage("Too many courses. Maximum allowed is 30.");
+            // Exit the method on validation failure
+        }
+    } else {
+        showErrorMessage("Courses list Empty");
+    }
+}
+else if (readingTimes) {
+    String[] times = line.split(",");
+    
+    if (times.length != 0) {
+        if (times.length <= 15) {
+            for (String time : times) {
+                String trimmedTime = time.trim();
+                
+                // Check for duplicates
+                boolean isDuplicate = false;
+                for (String addedTime : inp_1_timing) {
+                    if (addedTime.equals(trimmedTime)) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+
+                if (!isDuplicate && isValidTiming(trimmedTime)) {
+                    inp_1_timing.add(trimmedTime);
+                    String insert_timing = "INSERT INTO lecture_timings (timings) VALUES (" + '"' + trimmedTime + '"' + ");";
+                    PreparedStatement in_timing = con.prepareStatement(insert_timing);
+                    System.out.println(insert_timing);
+                    in_timing.executeUpdate();
+                    System.out.println(insert_timing);
+                } else {
+                    if (isDuplicate) {
+                        showErrorMessage("Duplicate timing: " + trimmedTime);
+                    } else if(!isValidTiming(trimmedTime)){
+                        showErrorMessage("Invalid timing: " + trimmedTime);
+                    }
+                    // Exit the method on validation failure
+                }
+            }
+        } else {
+            showErrorMessage("Too many timings. Maximum allowed is 15.");
+        }
+    } else {
+        showErrorMessage("Timings list Empty");
+    }
+}
+
                 fileIsEmpty=false;
                 
             }
@@ -227,45 +294,68 @@ public class InputFileReader {
                 String[] parts = line.split("; "); // Split by ": " to match the specified format
                 
             
-                if (parts.length >= 3) {
-                    String course = parts[0].trim();
-                    String capacityStr = parts[1].trim();
-                    String[] time_parts = parts[2].split(",");
-                    String[] preference = new String[time_parts.length];
-                    //for(int i=0;i<preference.length;i++){
-                    //    System.out.println(preference[i]);
-                    //}
-                    
-                    // Copy elements from time_parts to preference
-                    for (int i = 0; i < time_parts.length; i++) {
-                        
-                        preference[i] = time_parts[i].trim();
+if (parts.length >= 3) {
+    String course = parts[0].trim();
+    String capacityStr = parts[1].trim();
+    String[] time_parts = parts[2].split(",");
+    String[] preference = new String[time_parts.length];
+
+    // Copy elements from time_parts to preference
+    for (int i = 0; i < time_parts.length; i++) {
+        preference[i] = time_parts[i].trim();
+    }
+
+    try {
+        int capacity = Integer.parseInt(capacityStr);
+        if (capacity >= 2 && capacity <= 250) {
+            if (preference.length <= 5) { // Check if preferences are less than or equal to 5
+                // Check for duplicates
+                boolean isDuplicate = false;
+                for (String addedCourse : inp_2_courses) {
+                    if (addedCourse.equals(course)) {
+                        isDuplicate = true;
+                        break;
                     }
-            
-                    if (isValidCourse(course) && isValidCapacity(capacityStr)/*&& validateInputCourse(course) && isValidTiming(preference)*/) {
-                        inp_2_courses.add(course);
-                        inp_2_cap.add(Integer.valueOf(capacityStr));
-                        String insert_course="INSERT INTO course_details (courseid,enrollment) VALUES ("+'"'+course+'"'+','+Integer.valueOf(capacityStr)+");";
-                        PreparedStatement in_course = con.prepareStatement(insert_course);
-                        // Ensure that inp_2_pref contains all the strings from preference
-                        in_course.executeUpdate();
-                        List<String> coursePreferences = new ArrayList<>();
-                        for (String pref : preference) {
-                            coursePreferences.add(pref.trim());
-                            String insert_pref="INSERT INTO course_timepreference (course_id,timings) VALUES ("+'"'+course+'"'+','+'"'+pref+'"'+");";
-                            PreparedStatement in_pref = con.prepareStatement(insert_pref);
-                        // Ensure that inp_2_pref contains all the strings from preference
-                            in_pref.executeUpdate();
-                        }
-                        
+                }
+
+                if (!isDuplicate && isValidCourse(course)) {
+                    inp_2_courses.add(course);
+                    inp_2_cap.add(capacity);
+                    String insert_course = "INSERT INTO course_details (courseid,enrollment) VALUES (" + '"' + course + '"' + ',' + capacity + ");";
+                    PreparedStatement in_course = con.prepareStatement(insert_course);
+                    in_course.executeUpdate();
+
+                    List<String> coursePreferences = new ArrayList<>();
+                    for (String pref : preference) {
+                        coursePreferences.add(pref.trim());
+                        String insert_pref = "INSERT INTO course_timepreference (course_id,timings) VALUES (" + '"' + course + '"' + ',' + '"' + pref + '"' + ");";
+                        PreparedStatement in_pref = con.prepareStatement(insert_pref);
+                        System.out.println(insert_pref);
+                        in_pref.executeUpdate();
+                    }
 
                     // Add the list of preferences to inp_2_pref
-                        inp_2_pref.add(coursePreferences);
-                        
+                    inp_2_pref.add(coursePreferences);
+                } else {
+                    if (isDuplicate) {
+                        showErrorMessage("Duplicate course: " + course);
                     } else {
                         showErrorMessage("Invalid input: " + line);
                     }
                 }
+            } else {
+                showErrorMessage("Too many preferences. Maximum allowed is 5.");
+            }
+        } else {
+            showErrorMessage("Enrollment is not within the valid range (2-250): " + line);
+        }
+    } catch (NumberFormatException e) {
+        showErrorMessage("Invalid capacity: " + capacityStr);
+    }
+}
+
+
+
                 fileIsEmpty=false;
             }
             
@@ -314,6 +404,8 @@ public class InputFileReader {
     }
 
     public Object readInputFile() {
-        return null;
+        
+        
+        return haserror;
     }
 }
